@@ -1,36 +1,25 @@
-## Step 1: (replace-me: STEP-NAME)
+## 1단계 · 알림에 이름표를 붙인다
 
-(replace-me: OPTIONAL Brief story or scenario to introduce the step)
+이 저장소의 `package.json` 에는 오래된 패키지가 두 개 있습니다.
+저장소 **Settings → Advanced Security** 에서 Dependabot alerts 를 켜고, Security 탭에서 알림을 확인하세요.
 
-(replace-me: OPTIONAL Reference images from the `.github/images/` directory to support any part of the content)
+### 할 일
 
-<img width="200" alt="descriptive alt text" src="../images/inspectocat.png" />
+`docs/triage.md` 를 만들고, 본 알림 하나에 대해 아래 네 가지를 적으세요.
+용어 세 개는 반드시 그대로 쓰세요.
 
-### 📖 Theory: (replace-me: Theory title)
+- `CVE` — 이 취약점의 공개 식별자
+- `CWE` — 어떤 종류의 결함인가
+- `EPSS` — 실제로 악용될 확률 추정치
+- 내 판단 — 지금 고칠 것인가, 미룰 것인가, 그 이유
 
-<!-- GitHub-styled notifications can be used outside of ordered lists. Available options are: NOTE, IMPORTANT, WARNING, TIP, CAUTION -->
-<!--
-> [!NOTE]
-> (Important note or additional information relevant to this section)
- -->
+### 왜 이렇게 하나
 
-(replace-me: Optional theory or background information relevant to this step)
+셋은 서로 다른 질문에 답합니다. 시험은 이 구분을 묻습니다.
 
+- CVSS 는 **얼마나 심각한가**
+- CWE 는 **어떤 유형인가**
+- EPSS 는 **실제로 공격받을 가능성이 얼마나 되는가**
 
-### ⌨️ Activity: (replace-me: Activity title)
-
-1. (replace-me: First instruction)
-
-    (replace-me: Make sure to properly indent any multiline instructions)
-
-1. (replace-me: Second instruction)
-
-1. (replace-me: Additional instructions as needed)
-
-<details>
-<summary>Having trouble? 🤷</summary><br/>
-
-- (replace-me: Troubleshooting tip or hint)
-- (replace-me: Additional troubleshooting tips as needed)
-
-</details>
+CVSS 9.8 인데 EPSS 가 0.1% 인 취약점과, CVSS 6.5 인데 EPSS 가 40% 인 취약점이 있으면
+뒤엣것을 먼저 고칩니다. 심각도만 보고 줄 세우면 순서가 틀립니다.
