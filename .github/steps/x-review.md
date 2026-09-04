@@ -1,16 +1,10 @@
-## Review
+## 정리
 
-_Congratulations, you've completed this exercise and learned a lot about (replace-me: feature/product that was taught in this exercise)
+보안 운영의 순서는 이렇습니다.
 
-<img src="https://octodex.github.com/images/jetpacktocat.png" alt="celebrate" width=200 align=right>
+1. 알림을 **분류**한다 — CVE, CWE, EPSS 로 성격을 파악
+2. **우선순위**를 매긴다 — 심각도만이 아니라 악용 가능성과 실제 사용 여부까지
+3. **조치**한다 — 고치거나, 사유를 남기고 해제하거나
+4. **재발을 막는다** — 예방 우선 장치를 앞으로 당긴다
 
-Here's a recap of your accomplishments:
-
-- (replace-me: Accomplishment #1)
-- (replace-me: Accomplishment #N)
-
-### What's next?
-
-- (replace-me: Natural follow up Skills exercise - if there is one)
-- (replace-me: Documentation link to learn more about the feature)
-- (replace-me: Other resources or calls to action)
+1~3 만 반복하면 알림은 줄지 않습니다. 4가 있어야 총량이 내려갑니다.
