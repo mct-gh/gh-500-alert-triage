@@ -1,35 +1,27 @@
-## Step 3: (replace-me: STEP-NAME)
+## 3단계 · 해제할 때는 사유를 남긴다
 
-(replace-me: OPTIONAL Brief story or scenario to introduce the step)
+모든 알림을 고칠 수는 없습니다. 안 고치기로 하는 것도 정당한 결정입니다.
+단, 기록이 남아야 결정이 됩니다.
 
-### 📖 Theory: (replace-me: Theory title)
+### 할 일
 
-<!-- GitHub-styled notifications can be used outside of ordered lists. Available options are: NOTE, IMPORTANT, WARNING, TIP, CAUTION -->
-<!--
-> [!NOTE]
-> (Important note or additional information relevant to this section)
- -->
+1. Security → Dependabot alerts 에서 알림 하나를 고릅니다
+2. **Dismiss** 를 누르고 사유를 선택합니다
+   - 예: `Vulnerable code is not actually used`
+3. 코멘트 칸에 왜 그렇게 판단했는지 한 문장 적습니다
 
-(replace-me: Optional theory or background information relevant to this step)
+채점기가 API 로 해제된 알림이 있는지 확인합니다.
 
-### ⌨️ Activity: (replace-me: Activity title)
+### 왜 이렇게 하나
 
-1. (replace-me: First instruction)
+해제 사유는 네 가지가 정해져 있습니다. 임의로 쓰는 자유 문장이 아닙니다.
+시험은 어떤 상황에 어떤 사유를 골라야 하는지를 묻습니다.
 
-   (replace-me: Make sure to properly indent any multiline instructions)
+- 취약한 코드를 실제로 안 쓴다
+- 위험을 감수하기로 했다
+- 오탐이다
+- 나중에 고친다
 
-1. (replace-me: Second instruction)
-
-   (replace-me: Optionally reference images from the `.github/images/` directory to support any part of the content)
-
-   <img width="200" alt="descriptive alt text" src="../images/jetpacktocat.png" />
-
-1. (replace-me: Additional instructions as needed)
-
-<details>
-<summary>Having trouble? 🤷</summary><br/>
-
-- (replace-me: Troubleshooting tip or hint)
-- (replace-me: Additional troubleshooting tips as needed)
-
-</details>
+그리고 중요한 것 하나. 해제는 **되돌릴 수 있습니다.**
+같은 취약점이 다른 경로로 다시 들어오면 알림이 새로 뜹니다.
+해제가 영구 면제가 아니라는 점이 자주 틀리는 부분입니다.
