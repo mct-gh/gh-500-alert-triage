@@ -1,36 +1,37 @@
-## Step 2: (replace-me: STEP-NAME)
+## 2단계 · 병합 전에 막는다
 
-(replace-me: OPTIONAL Brief story or scenario to introduce the step)
+알림을 사후에 처리하는 것보다, 애초에 들어오지 못하게 하는 것이 싸게 먹힙니다.
 
-### 📖 Theory: (replace-me: Theory title)
+### 할 일
 
-<!-- GitHub-styled notifications can be used outside of ordered lists. Available options are: NOTE, IMPORTANT, WARNING, TIP, CAUTION -->
-<!--
-> [!NOTE]
-> (Important note or additional information relevant to this section)
- -->
+`.github/workflows/dependency-review.yml` 을 만드세요.
 
-(replace-me: Optional theory or background information relevant to this step)
+```yaml
+name: Dependency review
 
-(replace-me: OPTIONAL Reference images from the `.github/images/` directory to support any part of the content)
+on:
+  pull_request:
+    branches: [main]
 
-<img width="200" alt="descriptive alt text" src="../images/inflatocat.png" />
+permissions:
+  contents: read
 
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: always
+```
 
-### ⌨️ Activity: (replace-me: Activity title)
+### 왜 이렇게 하나
 
-1. (replace-me: First instruction)
+`fail-on-severity` 가 이 랩의 핵심입니다.
+임계값을 `low` 로 잡으면 PR 이 계속 막혀서 팀이 검사를 꺼버립니다.
+`critical` 로만 잡으면 사실상 아무것도 안 막습니다.
 
-    (replace-me: Make sure to properly indent any multiline instructions)
-
-1. (replace-me: Second instruction)
-
-1. (replace-me: Additional instructions as needed)
-
-<details>
-<summary>Having trouble? 🤷</summary><br/>
-
-- (replace-me: Troubleshooting tip or hint)
-- (replace-me: Additional troubleshooting tips as needed)
-
-</details>
+Dependency Review 는 **PR 에서 새로 추가되는 의존성**만 봅니다.
+이미 들어와 있는 취약점은 Dependabot 알림이 담당합니다. 둘은 역할이 다릅니다.
