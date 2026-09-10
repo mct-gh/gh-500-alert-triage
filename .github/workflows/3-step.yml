@@ -1,0 +1,159 @@
+name: Step 3
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/dismissal.md'
+
+permissions:
+  contents: read
+  actions: write
+  issues: write
+  vulnerability-alerts: read
+
+concurrency:
+  group: "3-step"
+  cancel-in-progress: true
+
+env:
+  STEP_4_FILE: ".github/steps/4-step.md"
+jobs:
+  find_exercise:
+    name: Find Exercise Issue
+    uses: skills/exercise-toolkit/.github/workflows/find-exercise-issue.yml@v0.9.3
+
+  check_step_work:
+    name: Check step work
+    needs: [find_exercise]
+    runs-on: ubuntu-latest
+    env:
+      ISSUE_REPOSITORY: ${{ github.repository }}
+      ISSUE_NUMBER: ${{ needs.find_exercise.outputs.issue-number }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Get response templates
+        uses: actions/checkout@v7
+        with:
+          repository: skills/exercise-toolkit
+          path: exercise-toolkit
+          ref: v0.9.3
+
+      - name: Find last comment
+        id: find-last-comment
+        uses: peter-evans/find-comment@v4
+        with:
+          repository: ${{ env.ISSUE_REPOSITORY }}
+          issue-number: ${{ env.ISSUE_NUMBER }}
+          comment-author: github-actions[bot]
+          direction: last
+
+      - name: Update comment - checking work
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          repository: ${{ env.ISSUE_REPOSITORY }}
+          issue-number: ${{ env.ISSUE_NUMBER }}
+          comment-id: ${{ steps.find-last-comment.outputs.comment-id }}
+          file: exercise-toolkit/markdown-templates/step-feedback/checking-work.md
+          edit-mode: replace
+
+      - name: "Check file exists - docs/dismissal.md"
+        id: check-file
+        continue-on-error: true
+        uses: skills/exercise-toolkit/actions/file-exists@v0.9.3
+        with:
+          file: 'docs/dismissal.md'
+
+      - name: Check that an alert was dismissed with a reason
+        id: check-dismissed
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Dependabot 알림은 vulnerability-alerts 권한으로 읽는다. security-events 가 아니다
+          count=$(gh api "repos/${{ github.repository }}/dependabot/alerts?state=dismissed&per_page=100" --jq 'length')
+          echo "해제된 알림 수: $count"
+          if [ "$count" -lt 1 ]; then
+            echo "해제된 Dependabot 알림이 없습니다. 사유를 골라 Dismiss 했는지 확인하세요."
+            exit 1
+          fi
+          reasoned=$(gh api "repos/${{ github.repository }}/dependabot/alerts?state=dismissed&per_page=100" \
+            --jq '[.[] | select(.dismissed_reason != null)] | length')
+          if [ "$reasoned" -lt 1 ]; then
+            echo "해제 사유가 기록되지 않았습니다."
+            exit 1
+          fi
+
+      - name: Update comment - step results
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          repository: ${{ env.ISSUE_REPOSITORY }}
+          issue-number: ${{ env.ISSUE_NUMBER }}
+          comment-id: ${{ steps.find-last-comment.outputs.comment-id }}
+          edit-mode: replace
+          file: exercise-toolkit/markdown-templates/step-feedback/step-results-table.md
+          vars: |
+            step_number: 3
+            results_table:
+              - description: "해제 판단을 기록한 문서를 만들었다"
+                passed: ${{ steps.check-file.outcome == 'success' }}
+              - description: "사유를 남기고 알림을 해제했다"
+                passed: ${{ steps.check-dismissed.outcome == 'success' }}
+
+      - name: Fail job if not all checks passed
+        if: contains(steps.*.outcome, 'failure')
+        run: exit 1
+
+  post_next_step_content:
+    name: Post next step content
+    needs: [find_exercise, check_step_work]
+    runs-on: ubuntu-latest
+    env:
+      ISSUE_REPOSITORY: ${{ github.repository }}
+      ISSUE_NUMBER: ${{ needs.find_exercise.outputs.issue-number }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Get response templates
+        uses: actions/checkout@v7
+        with:
+          repository: skills/exercise-toolkit
+          path: exercise-toolkit
+          ref: v0.9.3
+
+      - name: Create comment - step finished
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          repository: ${{ env.ISSUE_REPOSITORY }}
+          issue-number: ${{ env.ISSUE_NUMBER }}
+          file: exercise-toolkit/markdown-templates/step-feedback/step-finished-prepare-next-step.md
+          vars: |
+            next_step_number: 4
+
+      - name: Create comment - add step content
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          repository: ${{ env.ISSUE_REPOSITORY }}
+          issue-number: ${{ env.ISSUE_NUMBER }}
+          file: ${{ env.STEP_4_FILE }}
+
+      - name: Create comment - watching for progress
+        uses: GrantBirki/comment@v2.1.1
+        with:
+          repository: ${{ env.ISSUE_REPOSITORY }}
+          issue-number: ${{ env.ISSUE_NUMBER }}
+          file: exercise-toolkit/markdown-templates/step-feedback/watching-for-progress.md
+
+      - name: Disable current workflow and enable next one
+        run: |
+          gh workflow disable "${{ github.workflow }}"
+          gh workflow enable "Step 4"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
